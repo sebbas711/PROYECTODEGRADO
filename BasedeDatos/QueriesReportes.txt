@@ -1,0 +1,66 @@
+//PEDIDOS // 
+
+*VENTA TOTAL DEL MES*
+select concat(year(p.fecha),'-',month(p.fecha)) as id_group, year(p.fecha) as anio, month(p.fecha) as mes, sum(p.valor_total) as total_mes
+from pedido p
+group by id_group, anio, mes
+order by anio desc, mes desc
+limit 3;
+
+*TIPO DE PEDIDO/CANTIDAD*
+select p.tipo_pedido, count(p.id) as cantidad 
+from pedido p
+group by tipo_pedido
+order by 1
+;
+
+*TIPO DE PEDIDO/CANTIDAD/FECHA*
+select year(p.fecha) as anio, month(p.fecha) as mes, p.tipo_pedido, count(p.id) as cantidad 
+from pedido p
+group by 1,2,3
+order by 1 desc,2 desc,3 asc
+;
+
+//PRODUCTOS//
+
+*CATEGORIA QUE MAS SE PIDE DEL PEDIDO*
+select pro.id, concat(cat.nombre_categoria, ' - ', pro.nombre), count(dp.id) as cantidad_de_pedidos
+from detalle_pedido dp
+inner join producto pro on pro.id = dp.Producto
+inner join categoria_producto cat on cat.id = pro.categoria_producto
+group by 1,2
+order by 3 desc
+;
+
+*CUANTO SE VENDIO DE CADA PRODUCTO*
+select pro.id, concat(cat.nombre_categoria, ' - ', pro.nombre), sum(dp.cantidad) as cantidad_vidad
+from detalle_pedido dp
+inner join producto pro on pro.id = dp.Producto
+inner join categoria_producto cat on cat.id = pro.categoria_producto
+group by 1,2
+order by 3 desc
+;
+
+*CUANTO SE VENDIO DE CADA PRODUCTO PERO COMENZANDO POR LA CATEGORIA*
+select cat.id, cat.nombre_categoria, sum(dp.cantidad) as cantidad_vidad
+from categoria_producto cat
+inner join producto pro on pro.categoria_producto = cat.id
+inner join detalle_pedido dp on dp.Producto = pro.id
+group by 1,2
+order by 3 desc
+;
+
+select * /*year(p.fecha) as anio, month(p.fecha) as mes, sum(p.valor_total) as total_mes */
+from pedido p
+/*group by anio, mes
+order by anio desc, mes desc*/
+limit 3;
+
+//INSUMOS//
+*TOTAL DEL INSUMO SEGUN LA CANTIDAD*
+select i.nombre, concat(monthname(i.fecha_ingreso)," ", year(i.fecha_ingreso)) as mes, sum(inpro.cantidad_insumo) as total
+from insumo i
+inner join insumos_del_producto inpro on inpro.insumo = i.id
+group by 1,2
+order by 2 asc
+;
